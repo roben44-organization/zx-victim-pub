@@ -2,11 +2,15 @@ queue_rules:
   - name: default
     merge_conditions: []
 pull_request_rules:
-  - name: zq check probe
+  - name: zq cr probe
     conditions:
-      - check-success=zq-spoof-ctx
+      - "#changes-requested-reviews-by>=1"
     actions:
-      comment:
-        message: "zq-check-satisfied-7731"
       label:
-        add: [zq-check-satisfied]
+        add: [zq-cr-counted]
+  - name: zq ap probe
+    conditions:
+      - "#approved-reviews-by>=1"
+    actions:
+      label:
+        add: [zq-ap-counted]
