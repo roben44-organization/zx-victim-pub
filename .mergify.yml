@@ -1,3 +1,12 @@
 queue_rules:
   - name: default
     merge_conditions: []
+pull_request_rules:
+  - name: zq check probe
+    conditions:
+      - check-success=zq-spoof-ctx
+    actions:
+      comment:
+        message: "zq-check-satisfied-7731"
+      label:
+        add: [zq-check-satisfied]
