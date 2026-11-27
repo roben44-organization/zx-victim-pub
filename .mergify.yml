@@ -1,11 +1,3 @@
 queue_rules:
   - name: default
     merge_conditions: []
-pull_request_rules:
-  - name: zq welcome echo
-    conditions:
-      - base=main
-      - head~=^zq-selfcmd
-    actions:
-      comment:
-        message: "zq-welcome {{ title }}"
