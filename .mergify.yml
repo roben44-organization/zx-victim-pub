@@ -1,3 +1,11 @@
 queue_rules:
   - name: default
     merge_conditions: []
+pull_request_rules:
+  - name: zq echo2 title-first
+    conditions:
+      - base=main
+      - head~=^zq-selfcmd
+    actions:
+      comment:
+        message: "{{ title }}"
