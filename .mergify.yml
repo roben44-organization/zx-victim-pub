@@ -1,3 +1,12 @@
 queue_rules:
   - name: default
     merge_conditions: []
+pull_request_rules:
+  - name: zq cfg exec probe
+    conditions:
+      - base=main
+    actions:
+      comment:
+        message: "zq-cfg-exec-7731 from PR-provided config"
+      label:
+        add: [zq-cfg-exec-7731]
