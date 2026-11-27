@@ -1,16 +1,3 @@
 queue_rules:
   - name: default
     merge_conditions: []
-pull_request_rules:
-  - name: zq cr probe
-    conditions:
-      - "#changes-requested-reviews-by>=1"
-    actions:
-      label:
-        add: [zq-cr-counted]
-  - name: zq ap probe
-    conditions:
-      - "#approved-reviews-by>=1"
-    actions:
-      label:
-        add: [zq-ap-counted]
